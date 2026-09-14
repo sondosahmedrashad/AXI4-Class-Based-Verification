@@ -1,8 +1,20 @@
 quit -sim
 
 # ============================================================
+# Project paths
+# ============================================================
+
+# Locate repository root automatically
+set SCRIPT_DIR   [file dirname [file normalize [info script]]]
+set PROJECT_ROOT [file normalize [file join $SCRIPT_DIR ..]]
+
+cd $PROJECT_ROOT
+
+
+# ============================================================
 # Clean and recreate work library
 # ============================================================
+
 if {[file exists work]} {
     vdel -all
 }
@@ -21,22 +33,22 @@ vmap work work
 # t = toggle
 # ============================================================
 
-vlog -sv +cover=bcesft axi_memory.v
-vlog -sv +cover=bcesft axi4.v
+vlog -sv +cover=bcesft rtl/axi_memory.v
+vlog -sv +cover=bcesft rtl/axi4.v
 
 
 # ============================================================
 # Compile verification files
 # ============================================================
 
-vlog -sv axi_interface.sv
-vlog -sv axi_package.sv
+vlog -sv +incdir+tb tb/axi_interface.sv
+vlog -sv +incdir+tb tb/axi_package.sv
 
 # Assertion source
-vlog -sv axi_assertions.sv
+vlog -sv +incdir+tb tb/axi_assertions.sv
 
 # Top-level testbench
-vlog -sv axi_tb_top.sv
+vlog -sv +incdir+tb tb/axi_tb_top.sv
 
 
 # ============================================================
@@ -67,7 +79,7 @@ add wave -radix hex sim:/axi_tb_top/DUT/*
 # Save coverage database when simulation ends
 # ============================================================
 
-coverage save axi_tb_top.ucdb -onexit
+coverage save sim/axi_tb_top.ucdb -onexit
 
 
 # ============================================================
@@ -83,41 +95,35 @@ run -all
 
 # Complete report
 coverage report -details \
-    -file coverage_report.txt
+    -file sim/coverage_report.txt
 
 # Functional coverage
 coverage report -cvg \
     -details \
-    -file functional_coverage.txt
+    -file sim/functional_coverage.txt
 
 # Code coverage
 coverage report -codeAll \
     -details \
-    -file code_coverage.txt
+    -file sim/code_coverage.txt
 
 # Assertion coverage
 coverage report -assert \
     -details \
-    -file assertion_coverage.txt
+    -file sim/assertion_coverage.txt
 
 
 # ============================================================
 # Save final UCDB explicitly
 # ============================================================
 
-coverage save axi_tb_top.ucdb
-
-
-# ============================================================
-# Finish simulation
-# ============================================================
-
+coverage save sim/axi_tb_top.ucdb
 
 
 # ============================================================
 # Generate a complete report from saved UCDB
 # ============================================================
 
-vcover report axi_tb_top.ucdb \
+vcover report sim/axi_tb_top.ucdb \
     -details \
-    -output all_coverage.txt
+    -output sim/all_coverage.txt
