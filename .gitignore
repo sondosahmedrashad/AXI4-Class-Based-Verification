@@ -1,0 +1,15 @@
+# QuestaSim / ModelSim generated files
+work/
+*.wlf
+*.vcd
+*.ucdb
+*.log
+transcript
+modelsim.ini
+
+# Generated coverage reports
+sim/coverage_report.txt
+sim/functional_coverage.txt
+sim/code_coverage.txt
+sim/assertion_coverage.txt
+sim/all_coverage.txt
